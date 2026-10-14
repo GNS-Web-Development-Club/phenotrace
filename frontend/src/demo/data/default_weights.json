@@ -1,0 +1,6 @@
+{
+ "gene_phenotype": 0.45,
+ "pathogenicity": 0.25,
+ "rarity": 0.2,
+ "inheritance": 0.1
+}

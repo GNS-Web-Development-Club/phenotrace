@@ -1,0 +1,17 @@
+##fileformat=VCFv4.2
+##reference=GRCh38
+##source=PhenoTrace sample library (SYNTHETIC — not a real patient)
+##scenario=Child with recurrent chest infections, salty sweat, and failure to thrive.
+##suggested_phenotype=recurrent chest infections, salty sweat, failure to thrive
+##FILTER=<ID=PASS,Description="All filters passed">
+##FILTER=<ID=LowQual,Description="Low quality">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	RESP_DEMO
+chr7	117559590	.	ATCT	A	760	PASS	DP=48	GT:DP	1/1:48
+chr19	11089000	.	C	T	700	PASS	DP=45	GT:DP	0/1:45
+chr1	11790000	.	G	A	640	PASS	DP=42	GT:DP	0/1:42
+chr3	200000	.	T	C	250	PASS	DP=19	GT:DP	0/1:19
+chr3	300000	.	G	GA	215	PASS	DP=15	GT:DP	0/1:15
+chr17	43093000	.	T	C	880	PASS	DP=58	GT:DP	1/1:58

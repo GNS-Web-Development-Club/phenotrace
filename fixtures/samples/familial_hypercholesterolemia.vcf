@@ -1,0 +1,17 @@
+##fileformat=VCFv4.2
+##reference=GRCh38
+##source=PhenoTrace sample library (SYNTHETIC — not a real patient)
+##scenario=Adult with very high cholesterol and early coronary artery disease. An incidental, phenotype-irrelevant pathogenic variant is present to show phenotype-driven ranking.
+##suggested_phenotype=high cholesterol and early coronary artery disease
+##FILTER=<ID=PASS,Description="All filters passed">
+##FILTER=<ID=LowQual,Description="Low quality">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	CARDIO_DEMO
+chr19	11089000	.	C	T	790	PASS	DP=50	GT:DP	0/1:50
+chr2	166277081	.	A	G	815	PASS	DP=53	GT:DP	0/1:53
+chr16	2092900	.	C	T	705	PASS	DP=41	GT:DP	0/1:41
+chr3	200000	.	T	C	245	PASS	DP=17	GT:DP	0/1:17
+chr3	300000	.	G	GA	205	PASS	DP=14	GT:DP	0/1:14
+chr17	43093000	.	T	C	870	PASS	DP=57	GT:DP	1/1:57

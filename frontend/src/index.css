@@ -1,0 +1,406 @@
+@import "tailwindcss";
+
+/* =========================================================================
+   PhenoTrace: specimen requisition worksheet.
+   Carbonless form stock, ruled fields, rubber-stamp statuses, mono data.
+   Type: Zilla Slab (form headings), IBM Plex Sans (body), IBM Plex Mono (data).
+   ========================================================================= */
+
+@theme {
+  --font-sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Cascadia Mono", Consolas, monospace;
+  --font-slab: "Zilla Slab", "Rockwell", Georgia, serif;
+
+  --color-paper: #eef1ea;
+  --color-paper-2: #e4e8e0;
+  --color-paper-3: #d9ded4;
+  --color-ink: #1b2420;
+  --color-ink-2: #4e5a55;
+  --color-rule: #aebbb4;
+  --color-rule-2: #c8d1cb;
+  --color-pen: #1c4c8a;
+  --color-pen-tint: #dde6f2;
+  --color-stamp: #a3281c;
+  --color-stamp-tint: #f3dcd8;
+  --color-violet: #3b3f8f;
+  --color-violet-tint: #dcdff0;
+  --color-pass: #2a6240;
+  --color-pass-tint: #d9e8dc;
+  --color-ochre: #7a5a0e;
+  --color-ochre-tint: #f0e6c8;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+.font-mono,
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "zero";
+}
+
+.font-slab {
+  font-family: var(--font-slab);
+}
+
+a {
+  color: var(--color-pen);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* ---- Form chrome ------------------------------------------------------- */
+
+@layer components {
+  /* A ruled block of the worksheet: one solid rule on top, lighter below. */
+  .sheet {
+    border: 1px solid var(--color-rule);
+    background-color: var(--color-paper);
+  }
+  .sheet-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+    padding: 0.55rem 1rem;
+    border-bottom: 1px solid var(--color-rule);
+    background-color: var(--color-paper-2);
+  }
+  .sheet-title {
+    font-family: var(--font-slab);
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    color: var(--color-ink);
+  }
+  .sheet-note {
+    font-size: 0.875rem;
+    color: var(--color-ink-2);
+  }
+
+  /* Form field: caption above a ruled value line. */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+  .field-label {
+    font-size: 0.875rem;
+    line-height: 1.3;
+    color: var(--color-ink-2);
+  }
+  .field-value {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--color-ink);
+    border-bottom: 1px solid var(--color-rule);
+    padding-bottom: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Rubber stamp. */
+  .stamp {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border: 2px solid currentColor;
+    outline: 1px solid currentColor;
+    outline-offset: 2px;
+    font-family: var(--font-slab);
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
+    line-height: 1.35;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform: rotate(-2.5deg);
+    color: var(--color-stamp);
+  }
+  .stamp-violet {
+    color: var(--color-violet);
+  }
+  .stamp-pass {
+    color: var(--color-pass);
+  }
+  .stamp-lg {
+    font-size: 1.1rem;
+    padding: 0.2rem 0.8rem;
+  }
+  .stamp-press {
+    animation: stamp-press 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  }
+
+  /* Small square code box used for categorical values (P / LP / het / PASS). */
+  .code {
+    display: inline-block;
+    min-width: 2.6rem;
+    padding: 0.05rem 0.35rem;
+    border: 1px solid currentColor;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .code-red {
+    color: var(--color-stamp);
+    background-color: var(--color-stamp-tint);
+  }
+  .code-green {
+    color: var(--color-pass);
+    background-color: var(--color-pass-tint);
+  }
+  .code-ochre {
+    color: var(--color-ochre);
+    background-color: var(--color-ochre-tint);
+  }
+  .code-violet {
+    color: var(--color-violet);
+    background-color: var(--color-violet-tint);
+  }
+  .code-pen {
+    color: var(--color-pen);
+    background-color: var(--color-pen-tint);
+  }
+  .code-mute {
+    color: var(--color-ink-2);
+    border-color: var(--color-rule);
+    background-color: transparent;
+  }
+
+  /* Buttons: solid ink for the primary action, ruled for secondary. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.95rem;
+    border: 1px solid var(--color-ink);
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    cursor: pointer;
+    transition: background-color 0.12s ease, color 0.12s ease;
+  }
+  .btn:hover:not(:disabled) {
+    background-color: var(--color-pen);
+    border-color: var(--color-pen);
+  }
+  .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+  .btn-ruled {
+    background-color: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+  .btn-ruled:hover:not(:disabled) {
+    background-color: var(--color-pen-tint);
+    color: var(--color-pen);
+    border-color: var(--color-pen);
+  }
+  .btn-sm {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.875rem;
+  }
+
+  .input {
+    width: 100%;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid var(--color-rule);
+    border-bottom-color: var(--color-ink);
+    background-color: #f7f8f5;
+    color: var(--color-ink);
+    font-size: 1rem;
+    line-height: 1.45;
+    outline: none;
+  }
+  .input:focus {
+    border-color: var(--color-pen);
+  }
+  .input::placeholder {
+    color: var(--color-ink-2);
+    opacity: 0.8;
+  }
+  .input:disabled {
+    opacity: 0.55;
+  }
+
+  /* Rows that act as options (sample picker, result rows). */
+  .row-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+  }
+  .row-btn:hover:not(:disabled) {
+    background-color: var(--color-paper-2);
+  }
+  .row-btn[aria-selected="true"],
+  .row-btn[aria-pressed="true"] {
+    background-color: var(--color-pen-tint);
+  }
+  .row-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .part-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 2px solid var(--color-ink);
+  }
+  .part-heading h2 {
+    font-family: var(--font-slab);
+    font-weight: 700;
+    font-size: 1.55rem;
+    line-height: 1.15;
+    margin: 0;
+  }
+  .part-heading .part-no {
+    font-family: var(--font-slab);
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--color-ink-2);
+  }
+  .part-heading .part-desc {
+    font-size: 0.95rem;
+    color: var(--color-ink-2);
+  }
+
+  /* Ruled data table rows. */
+  .ruled-row {
+    border-bottom: 1px solid var(--color-rule-2);
+  }
+}
+
+/* ---- Motion: a stamp impression and the gauge arc, nothing else. ------- */
+
+@keyframes stamp-press {
+  from {
+    opacity: 0;
+    transform: rotate(-2.5deg) scale(1.25);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-2.5deg) scale(1);
+  }
+}
+
+.gauge-arc {
+  transition: stroke-dashoffset 0.5s ease-out;
+}
+
+/* ---- Range sliders: a ruled track with a square ink thumb. ------------- */
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  background: transparent;
+  cursor: pointer;
+  margin: 0;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 2px;
+  background: var(--color-rule);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -8px;
+  height: 18px;
+  width: 10px;
+  background: var(--color-ink);
+  border: 1px solid var(--color-paper);
+}
+input[type="range"]::-moz-range-track {
+  height: 2px;
+  background: var(--color-rule);
+}
+input[type="range"]::-moz-range-thumb {
+  height: 18px;
+  width: 10px;
+  border-radius: 0;
+  background: var(--color-ink);
+  border: 1px solid var(--color-paper);
+}
+input[type="range"]:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--color-pen);
+  width: 18px;
+  height: 18px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-pen);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-pen-tint);
+  color: var(--color-ink);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-rule) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

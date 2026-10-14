@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.egg-info/
+
+# Node / Vite
+node_modules/
+frontend/dist/
+*.local
+
+# PhenoTrace runtime artifacts
+*.sqlite
+*.sqlite-*
+sessions/
+
+# Annotation databases are large and user-fetched; never commit them.
+data/databases/
+*.vcf.gz
+!fixtures/*.vcf
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

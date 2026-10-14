@@ -1,0 +1,23 @@
+[
+ {
+  "id": "epilepsy",
+  "title": "Epilepsy & developmental delay",
+  "description": "Infant with seizures, global developmental delay, and low muscle tone. SCN1A and MECP2 should rank highest.",
+  "phenotype": "seizures, developmental delay, low muscle tone",
+  "variants": 8
+ },
+ {
+  "id": "cystic_fibrosis",
+  "title": "Cystic fibrosis (respiratory)",
+  "description": "Recurrent chest infections, salty sweat, and failure to thrive. A homozygous CFTR frameshift should rank highest.",
+  "phenotype": "recurrent chest infections, salty sweat, failure to thrive",
+  "variants": 6
+ },
+ {
+  "id": "hypercholesterolemia",
+  "title": "Familial hypercholesterolemia",
+  "description": "Very high cholesterol with early coronary artery disease. LDLR should rank above an incidental, phenotype-irrelevant pathogenic variant.",
+  "phenotype": "high cholesterol and early coronary artery disease",
+  "variants": 6
+ }
+]

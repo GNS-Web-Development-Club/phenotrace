@@ -1,0 +1,220 @@
+[
+ {
+  "id": "HP:0000252",
+  "label": "Microcephaly",
+  "definition": null,
+  "synonyms": [
+   "small head",
+   "decreased head circumference",
+   "small head circumference"
+  ]
+ },
+ {
+  "id": "HP:0000717",
+  "label": "Autism",
+  "definition": null,
+  "synonyms": [
+   "autistic behavior",
+   "autism spectrum disorder",
+   "asd"
+  ]
+ },
+ {
+  "id": "HP:0000750",
+  "label": "Delayed speech and language development",
+  "definition": null,
+  "synonyms": [
+   "speech delay",
+   "language delay",
+   "delayed speech"
+  ]
+ },
+ {
+  "id": "HP:0000951",
+  "label": "Abnormality of the skin",
+  "definition": null,
+  "synonyms": []
+ },
+ {
+  "id": "HP:0001249",
+  "label": "Intellectual disability",
+  "definition": null,
+  "synonyms": [
+   "mental retardation",
+   "cognitive impairment",
+   "intellectual disability"
+  ]
+ },
+ {
+  "id": "HP:0001250",
+  "label": "Seizure",
+  "definition": null,
+  "synonyms": [
+   "seizures",
+   "epileptic seizure",
+   "convulsion",
+   "convulsions",
+   "epilepsy"
+  ]
+ },
+ {
+  "id": "HP:0001251",
+  "label": "Ataxia",
+  "definition": null,
+  "synonyms": [
+   "unsteady gait",
+   "incoordination",
+   "loss of coordination"
+  ]
+ },
+ {
+  "id": "HP:0001252",
+  "label": "Hypotonia",
+  "definition": null,
+  "synonyms": [
+   "muscular hypotonia",
+   "low muscle tone",
+   "decreased muscle tone",
+   "muscle hypotonia"
+  ]
+ },
+ {
+  "id": "HP:0001257",
+  "label": "Spasticity",
+  "definition": null,
+  "synonyms": [
+   "spastic"
+  ]
+ },
+ {
+  "id": "HP:0001263",
+  "label": "Global developmental delay",
+  "definition": null,
+  "synonyms": [
+   "developmental delay",
+   "delayed development",
+   "neurodevelopmental delay",
+   "psychomotor delay"
+  ]
+ },
+ {
+  "id": "HP:0001507",
+  "label": "Growth abnormality",
+  "definition": null,
+  "synonyms": []
+ },
+ {
+  "id": "HP:0001508",
+  "label": "Failure to thrive",
+  "definition": null,
+  "synonyms": [
+   "failure to gain weight",
+   "poor weight gain"
+  ]
+ },
+ {
+  "id": "HP:0001626",
+  "label": "Abnormality of the cardiovascular system",
+  "definition": null,
+  "synonyms": []
+ },
+ {
+  "id": "HP:0001677",
+  "label": "Coronary artery atherosclerosis",
+  "definition": null,
+  "synonyms": [
+   "coronary artery disease",
+   "atherosclerosis"
+  ]
+ },
+ {
+  "id": "HP:0001738",
+  "label": "Exocrine pancreatic insufficiency",
+  "definition": null,
+  "synonyms": [
+   "pancreatic insufficiency"
+  ]
+ },
+ {
+  "id": "HP:0002086",
+  "label": "Abnormality of the respiratory system",
+  "definition": null,
+  "synonyms": []
+ },
+ {
+  "id": "HP:0002376",
+  "label": "Developmental regression",
+  "definition": null,
+  "synonyms": [
+   "regression",
+   "loss of developmental milestones",
+   "developmental regression"
+  ]
+ },
+ {
+  "id": "HP:0002664",
+  "label": "Neoplasm",
+  "definition": null,
+  "synonyms": [
+   "tumor",
+   "cancer",
+   "malignancy"
+  ]
+ },
+ {
+  "id": "HP:0003124",
+  "label": "Hypercholesterolemia",
+  "definition": null,
+  "synonyms": [
+   "high cholesterol",
+   "elevated cholesterol",
+   "raised cholesterol"
+  ]
+ },
+ {
+  "id": "HP:0004322",
+  "label": "Short stature",
+  "definition": null,
+  "synonyms": [
+   "short height",
+   "decreased height",
+   "small stature"
+  ]
+ },
+ {
+  "id": "HP:0006538",
+  "label": "Recurrent bronchopulmonary infections",
+  "definition": null,
+  "synonyms": [
+   "recurrent lung infections",
+   "recurrent chest infections",
+   "recurrent respiratory infections"
+  ]
+ },
+ {
+  "id": "HP:0007359",
+  "label": "Focal-onset seizure",
+  "definition": null,
+  "synonyms": [
+   "focal seizure",
+   "partial seizure"
+  ]
+ },
+ {
+  "id": "HP:0012236",
+  "label": "Increased sweat chloride",
+  "definition": null,
+  "synonyms": [
+   "elevated sweat chloride"
+  ]
+ },
+ {
+  "id": "HP:0100615",
+  "label": "Ovarian neoplasm",
+  "definition": null,
+  "synonyms": [
+   "ovarian cancer",
+   "ovarian tumor"
+  ]
+ }
+]

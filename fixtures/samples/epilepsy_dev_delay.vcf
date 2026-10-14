@@ -1,0 +1,19 @@
+##fileformat=VCFv4.2
+##reference=GRCh38
+##source=PhenoTrace sample library (SYNTHETIC — not a real patient)
+##scenario=Infant with seizures, global developmental delay, and low muscle tone.
+##suggested_phenotype=seizures, developmental delay, low muscle tone
+##FILTER=<ID=PASS,Description="All filters passed">
+##FILTER=<ID=LowQual,Description="Low quality">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	NEURO_DEMO
+chr2	166277081	.	A	G	820	PASS	DP=52	GT:DP	0/1:52
+chrX	153296777	.	C	T	780	PASS	DP=44	GT:DP	0/1:44
+chr16	2092900	.	C	T	710	PASS	DP=40	GT:DP	0/1:40
+chr1	11790000	.	G	A	655	PASS	DP=46	GT:DP	0/1:46
+chr2	166277100	.	G	A	120	LowQual	DP=9	GT:DP	0/1:9
+chr3	200000	.	T	C	240	PASS	DP=18	GT:DP	0/1:18
+chr3	300000	.	G	GA	210	PASS	DP=16	GT:DP	0/1:16
+chr17	43093000	.	T	C	900	PASS	DP=61	GT:DP	1/1:61

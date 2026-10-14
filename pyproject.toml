@@ -1,0 +1,10 @@
+[project]
+name = "phenotrace"
+version = "0.1.0"
+description = "Local-first phenotype-driven variant triage"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+testpaths = ["backend/tests"]
+addopts = "-q"

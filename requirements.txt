@@ -1,0 +1,12 @@
+# PhenoTrace backend — runtime
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+python-multipart>=0.0.9      # multipart/form-data for VCF upload
+
+# dev / test
+pytest>=8.0
+httpx>=0.27                   # FastAPI TestClient
+
+# optional: native desktop window (app also runs fine in a browser)
+# pywebview>=5.0

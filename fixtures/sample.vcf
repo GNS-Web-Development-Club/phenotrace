@@ -1,0 +1,20 @@
+##fileformat=VCFv4.2
+##reference=GRCh38
+##FILTER=<ID=PASS,Description="All filters passed">
+##FILTER=<ID=LowQual,Description="Low quality">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	PATIENT01
+chr2	166277081	.	A	G	800	PASS	DP=50	GT:DP	0/1:50
+chr16	2092900	.	C	T	720	PASS	DP=40	GT:DP	1/1:40
+chr1	11790000	.	G	A,T	650	PASS	DP=44	GT:DP	1/2:44
+chrX	153296777	.	C	T	500	PASS	DP=30	GT	1
+chr7	117559590	.	ATCT	A	300	LowQual	DP=20	GT:DP	0/1:20
+chr12	25245350	.	C	A	.	PASS	DP=33	GT:DP	0/1:33
+chr3	100000	.	A	G	200	PASS	DP=10	GT:DP	0/0:10
+chr3	200000	.	T	C	210	PASS	DP=12	GT:DP	./.:12
+chr3	300000	.	G	GA,*	150	PASS	DP=8	GT:DP	1/2:8
+chr17	43093000	.	T	C	900	PASS	DP=60	GT:DP	1/1:60
+chr2	166277100	.	G	A	50	LowQual	DP=5	GT:DP	0/1:5
+chr19	11089000	.	C	T	770	PASS	DP=48	GT:DP	0/1:48
