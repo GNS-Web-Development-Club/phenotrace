@@ -53,7 +53,7 @@ function Detail({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="ruled-row flex items-baseline justify-between gap-3 py-1.5 text-[0.95rem]">
       <span className="shrink-0 text-ink-2">{label}</span>
-      <span className="truncate text-right font-mono">{value}</span>
+      <span className="min-w-0 break-words text-right font-mono">{value}</span>
     </div>
   );
 }
@@ -103,12 +103,12 @@ export function ExplanationPanel({ sv }: { sv: ScoredVariant | null }) {
             <div className="font-slab text-[1.7rem] font-bold italic leading-none">
               {a.gene ?? "no gene annotation"}
             </div>
-            <div className="mt-2 text-[0.95rem] text-ink-2">{sv.headline}</div>
+            <div className="mt-2 text-ink-2">{sv.headline}</div>
           </div>
           <RadialGauge value={gaugeValue} size={96} stroke={9} className="shrink-0">
             <div>
               <div className="font-mono text-[1.25rem] font-semibold leading-none">{b.composite.toFixed(3)}</div>
-              <div className="mt-1 text-[0.8rem] text-ink-2">of {maxComposite.toFixed(2)}</div>
+              <div className="mt-1 text-[0.875rem] text-ink-2">of {maxComposite.toFixed(2)}</div>
             </div>
           </RadialGauge>
         </div>
@@ -130,7 +130,7 @@ export function ExplanationPanel({ sv }: { sv: ScoredVariant | null }) {
               return (
                 <span
                   key={f.name}
-                  className={`${FACTOR_BG[i % 4]} flex h-full items-center justify-center overflow-hidden border-r border-paper font-mono text-[0.8rem] text-paper last:border-r-0`}
+                  className={`${FACTOR_BG[i % 4]} flex h-full items-center justify-center overflow-hidden border-r border-paper font-mono text-[0.875rem] text-paper last:border-r-0`}
                   style={{ width: `${pct}%` }}
                   title={`${f.name}: ${f.contribution.toFixed(3)}`}
                 >
@@ -212,7 +212,7 @@ export function ExplanationPanel({ sv }: { sv: ScoredVariant | null }) {
 
         <section className="border-l-4 border-pen pl-3">
           <Subhead>What would change this</Subhead>
-          <ul className="m-0 mt-1 list-disc pl-5 text-[0.95rem] leading-relaxed">
+          <ul className="m-0 mt-1 list-disc pl-5 leading-relaxed">
             {hints.slice(0, 3).map((h, i) => (
               <li key={i}>{h}</li>
             ))}

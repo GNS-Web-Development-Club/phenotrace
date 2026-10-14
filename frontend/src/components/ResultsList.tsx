@@ -46,7 +46,7 @@ export function ResultsList({ result, selectedId, onSelect }: Props) {
   };
 
   return (
-    <div className="sheet flex h-full flex-col">
+    <div className="sheet flex min-h-0 flex-col">
       <div className="sheet-head">
         <span className="sheet-title">Ranked variants</span>
         <span className="sheet-note font-mono">

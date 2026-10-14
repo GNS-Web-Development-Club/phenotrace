@@ -77,7 +77,7 @@ export function WeightControls({ weights, prefilter, inheritance, onWeights, onP
           );
         })}
 
-        <p className="m-0 text-[0.95rem]">
+        <p className="m-0">
           Weights sum to <span className="font-mono font-medium">{sum.toFixed(2)}</span>
           {balanced ? "." : "; composites are still comparable, the gauge scales to the sum."}
         </p>

@@ -58,14 +58,18 @@ export function DbBadge({
           <div key={s.source} className="field" title={s.version ?? ""}>
             <span className="field-label">{SOURCE_LABEL[s.source] ?? s.source}</span>
             <span className="field-value">
-              {s.snapshot_date ?? "undated"}, {s.row_count?.toLocaleString() ?? "?"} rows
+              {s.snapshot_date ?? "undated"}
+              <span className="block text-ink-2 sm:inline">
+                <span className="hidden sm:inline"> · </span>
+                {s.row_count?.toLocaleString() ?? "?"} rows
+              </span>
             </span>
           </div>
         ))}
       </div>
 
       {anySample && (
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-rule-2 px-4 py-2 text-[0.95rem] text-ink-2">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-rule-2 px-4 py-2 text-ink-2">
           <span>
             These are small demo snapshots, not real gnomAD, ClinVar or CADD. Build real databases
             with <code className="text-[0.9rem]">tools/db-builder</code>.

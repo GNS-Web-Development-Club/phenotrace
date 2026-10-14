@@ -126,6 +126,12 @@ a {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  @media (max-width: 640px) {
+    .field-value {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+  }
 
   /* Rubber stamp. */
   .stamp {
@@ -243,7 +249,7 @@ a {
     border-bottom-color: var(--color-ink);
     background-color: #f7f8f5;
     color: var(--color-ink);
-    font-size: 1rem;
+    font-size: 1.0625rem;
     line-height: 1.45;
     outline: none;
   }

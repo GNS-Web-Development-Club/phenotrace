@@ -39,7 +39,7 @@ export function SamplePicker({ samples, onPick, loadingId, busy }: Props) {
                 <span className="ml-auto text-[0.95rem] text-pen underline underline-offset-[3px]">
                   {loading ? "Loading" : "Load case"}
                 </span>
-                <span className="basis-full text-[0.95rem] leading-snug text-ink-2">
+                <span className="basis-full leading-snug text-ink-2">
                   {s.description}
                 </span>
               </button>

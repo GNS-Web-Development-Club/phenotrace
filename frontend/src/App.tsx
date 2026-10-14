@@ -147,7 +147,7 @@ export default function App() {
             <h1 className="font-slab text-[2.4rem] font-bold leading-none tracking-tight sm:text-[2.9rem]">
               PhenoTrace
             </h1>
-            <p className="mt-2 max-w-[62ch] text-[1.05rem] leading-snug text-ink-2">
+            <p className="mt-2 max-w-[62ch] text-[1.0625rem] leading-snug text-ink-2">
               Describe a patient's symptoms, and PhenoTrace maps them to HPO terms and ranks the
               variants in their VCF by likely causality, with every score broken into named factors.
             </p>
@@ -165,7 +165,7 @@ export default function App() {
           </div>
         </div>
         {IS_DEMO && (
-          <p className="mt-3 border-l-4 border-violet pl-3 text-[0.95rem] text-ink-2">
+          <p className="mt-3 max-w-[90ch] border-l-4 border-violet pl-3 text-ink-2">
             This is the bundled demo: three recorded sample cases, scored in the browser from data
             captured off the real backend. Your own VCF needs the local app; see the{" "}
             <a href={REPO_URL} target="_blank" rel="noreferrer">
@@ -180,7 +180,7 @@ export default function App() {
       <div className="mt-5 flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border border-stamp px-4 py-2.5">
           <span className="stamp">Not a diagnostic device</span>
-          <p className="m-0 text-[0.95rem] leading-snug">
+          <p className="m-0 leading-snug">
             Decision-support and research tool only. Rankings are hypotheses to investigate, not
             clinical conclusions.
           </p>

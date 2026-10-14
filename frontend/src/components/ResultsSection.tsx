@@ -86,7 +86,7 @@ export function ResultsSection({ termIds }: { termIds: string[] }) {
       />
 
       <div className="sheet flex flex-wrap items-center gap-x-5 gap-y-3 px-4 py-3">
-        <span className="text-[0.95rem]" aria-live="polite">
+        <span aria-live="polite">
           {scoring ? (
             "Scoring"
           ) : result ? (
@@ -128,7 +128,7 @@ export function ResultsSection({ termIds }: { termIds: string[] }) {
       {result && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
           <div className="min-w-0 lg:col-span-5">
-            <div className="h-[min(60vh,32rem)] lg:h-[64vh]">
+            <div className="flex max-h-[min(60vh,32rem)] flex-col lg:max-h-[64vh]">
               <ResultsList result={result} selectedId={selectedId} onSelect={setSelectedId} />
             </div>
           </div>
