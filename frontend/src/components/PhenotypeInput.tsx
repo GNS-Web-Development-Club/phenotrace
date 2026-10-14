@@ -44,45 +44,48 @@ export function PhenotypeInput({
   }, [seed]);
 
   return (
-    <div className="sheet">
-      <div className="sheet-head">
-        <label htmlFor="clinical-text" className="sheet-title">
-          Clinical features, in your own words
-        </label>
-        <span className="sheet-note">Ctrl+Enter maps the text</span>
-      </div>
-      <div className="flex flex-col gap-3 px-4 py-4">
-        <textarea
-          id="clinical-text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") void run(text);
-          }}
-          rows={3}
-          className="input resize-y leading-relaxed"
-        />
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <button type="button" onClick={() => void run(text)} disabled={busy || !text.trim()} className="btn">
-            {busy ? "Mapping" : "Map to HPO terms"}
-          </button>
-          <span className="text-[0.95rem] text-ink-2">Try:</span>
-          {EXAMPLES.map((ex) => (
-            <button
-              key={ex}
-              type="button"
-              onClick={() => {
-                setText(ex);
-                void run(ex);
-              }}
-              className="text-left text-[0.95rem] text-pen underline underline-offset-[3px]"
-            >
-              {ex}
-            </button>
+    <div>
+      <label htmlFor="clinical-text" className="subhead block">
+        Clinical features, in your own words
+      </label>
+      <p className="measure note mt-1">
+        Write the presentation as you would on a referral. Mapping (or Ctrl+Enter) matches the
+        phrases to HPO terms; you can correct the list below before it is confirmed.
+      </p>
+      <textarea
+        id="clinical-text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => {
+          if ((e.metaKey || e.ctrlKey) && e.key === "Enter") void run(text);
+        }}
+        rows={3}
+        className="input input-lined measure mt-3 resize-y"
+      />
+      <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-2">
+        <button type="button" onClick={() => void run(text)} disabled={busy || !text.trim()} className="btn">
+          {busy ? "Mapping" : "Map to HPO terms"}
+        </button>
+        <span className="note min-w-0 flex-1 basis-[20rem]">
+          or try{" "}
+          {EXAMPLES.map((ex, i) => (
+            <span key={ex}>
+              {i > 0 && "; "}
+              <button
+                type="button"
+                onClick={() => {
+                  setText(ex);
+                  void run(ex);
+                }}
+                className="btn-text text-[0.95rem]"
+              >
+                {ex}
+              </button>
+            </span>
           ))}
-        </div>
-        {err && <p className="m-0 text-[0.95rem] text-stamp">{err}</p>}
+        </span>
       </div>
+      {err && <p className="mt-2 text-[0.95rem] text-stamp">{err}</p>}
     </div>
   );
 }

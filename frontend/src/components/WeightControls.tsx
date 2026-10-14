@@ -1,5 +1,4 @@
 import type { PreFilter, Weights } from "../lib/types";
-import { FACTOR_BG } from "./ExplanationPanel";
 
 const DEFAULTS: Weights = {
   gene_phenotype: 0.45,
@@ -39,26 +38,23 @@ export function WeightControls({ weights, prefilter, inheritance, onWeights, onP
   const balanced = Math.abs(sum - 1) <= 0.001;
 
   return (
-    <div className="sheet grid grid-cols-1 gap-6 px-4 py-4 md:grid-cols-2 md:gap-10">
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-14">
       <section className="flex min-w-0 flex-col gap-3">
-        <div className="flex items-baseline justify-between">
-          <h3 className="m-0 font-slab text-[1.1rem] font-semibold">Scoring weights</h3>
-          <button type="button" onClick={() => onWeights({ ...DEFAULTS })} className="text-[0.95rem] text-pen underline underline-offset-[3px]">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+          <h3 className="subhead">Scoring weights</h3>
+          <button type="button" onClick={() => onWeights({ ...DEFAULTS })} className="btn-text text-[0.95rem]">
             Reset to defaults
           </button>
         </div>
 
-        {FACTORS.map((f, i) => {
+        {FACTORS.map((f) => {
           const val = weights[f.key];
           const def = DEFAULTS[f.key];
           const id = `w-${f.key}`;
           return (
             <div key={f.key}>
               <div className="flex items-baseline justify-between gap-3 text-[0.95rem]">
-                <label htmlFor={id} className="flex items-center gap-2">
-                  <span className={`h-2.5 w-2.5 ${FACTOR_BG[i]}`} aria-hidden="true" />
-                  {f.label}
-                </label>
+                <label htmlFor={id}>{f.label}</label>
                 <span className="font-mono">
                   {val.toFixed(2)}
                   <span className="text-ink-2"> (default {def.toFixed(2)})</span>
@@ -77,14 +73,14 @@ export function WeightControls({ weights, prefilter, inheritance, onWeights, onP
           );
         })}
 
-        <p className="m-0">
+        <p className="note">
           Weights sum to <span className="font-mono font-medium">{sum.toFixed(2)}</span>
-          {balanced ? "." : "; composites are still comparable, the gauge scales to the sum."}
+          {balanced ? "." : "; composites stay comparable, and the score is read against that sum."}
         </p>
       </section>
 
-      <section className="flex min-w-0 flex-col gap-3 md:border-l md:border-rule md:pl-10">
-        <h3 className="m-0 font-slab text-[1.1rem] font-semibold">Pre-filter and query</h3>
+      <section className="flex min-w-0 flex-col gap-4">
+        <h3 className="subhead">Pre-filter and query</h3>
 
         <label className="flex items-center gap-3 text-[0.95rem]">
           <input type="checkbox" checked={prefilter.enabled} onChange={(e) => onPrefilter({ ...prefilter, enabled: e.target.checked })} />
@@ -117,11 +113,9 @@ export function WeightControls({ weights, prefilter, inheritance, onWeights, onP
           </label>
         </div>
 
-        <div className="field">
-          <label htmlFor="inheritance-model" className="field-label">
-            Inheritance model
-          </label>
-          <select id="inheritance-model" value={inheritance} onChange={(e) => onInheritance(e.target.value)} className="input">
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-[0.95rem]">
+          <label htmlFor="inheritance-model">Inheritance model</label>
+          <select id="inheritance-model" value={inheritance} onChange={(e) => onInheritance(e.target.value)} className="input text-[0.95rem]">
             {INHERITANCE.map((o) => (
               <option key={o.v} value={o.v}>
                 {o.label}

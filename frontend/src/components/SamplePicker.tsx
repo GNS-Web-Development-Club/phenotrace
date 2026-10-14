@@ -8,41 +8,36 @@ interface Props {
 }
 
 /**
- * One-click sample cases. Each loads a small synthetic VCF whose loci line up
- * with the bundled annotation database, so it produces a clear ranking at once.
+ * Sample cases. Each loads a small synthetic VCF whose loci line up with the
+ * bundled annotation database, so it produces a clear ranking at once.
  */
 export function SamplePicker({ samples, onPick, loadingId, busy }: Props) {
   if (samples.length === 0) return null;
 
   return (
-    <div className="sheet">
-      <div className="sheet-head">
-        <span className="sheet-title">Sample cases</span>
-        <span className="sheet-note">synthetic patients, not real data</span>
-      </div>
-      <ul className="m-0 list-none p-0">
-        {samples.map((s, i) => {
+    <div>
+      <h3 className="subhead">Sample cases</h3>
+      <p className="measure note mt-1">
+        Synthetic patients, not real data. Loading a case fills the indication below with the
+        referral text recorded for it.
+      </p>
+      <ul className="m-0 mt-3 list-none p-0">
+        {samples.map((s) => {
           const loading = loadingId === s.id;
           return (
-            <li key={s.id} className={i < samples.length - 1 ? "ruled-row" : ""}>
+            <li key={s.id} className="ruled-row py-3">
               <button
                 type="button"
                 disabled={busy}
                 onClick={() => onPick(s)}
-                className="row-btn flex flex-wrap items-baseline gap-x-4 gap-y-1 px-4 py-3"
+                className="btn-text font-slab text-[1.2rem] font-semibold"
               >
-                <span className="font-mono text-[0.95rem] text-ink-2">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="font-slab text-[1.15rem] font-semibold">{s.title}</span>
-                <span className="font-mono text-[0.95rem] text-ink-2">{s.variants} variants</span>
-                <span className="ml-auto text-[0.95rem] text-pen underline underline-offset-[3px]">
-                  {loading ? "Loading" : "Load case"}
-                </span>
-                <span className="basis-full leading-snug text-ink-2">
-                  {s.description}
-                </span>
+                {s.title}
               </button>
+              <span className="ml-3 font-mono text-[0.95rem] text-ink-2">
+                {s.variants} variants{loading ? ", loading" : ""}
+              </span>
+              <span className="measure mt-0.5 block leading-snug text-ink-2">{s.description}</span>
             </li>
           );
         })}

@@ -31,22 +31,17 @@ export function VcfDropzone({ onLoaded, onError, busy, setBusy }: Props) {
 
   if (IS_DEMO) {
     return (
-      <div className="sheet">
-        <div className="sheet-head">
-          <span className="sheet-title">Your own VCF</span>
-          <span className="sheet-note">not available in the demo</span>
-        </div>
-        <div className="px-4 py-4">
-          <p className="m-0 max-w-[70ch]">
-            Uploads need the local app, which parses the file on your machine and never sends it
-            anywhere. Clone the{" "}
-            <a href={REPO_URL} target="_blank" rel="noreferrer">
-              repository
-            </a>
-            , run <code className="text-[0.95rem]">python run.py</code>, and drop a .vcf or .vcf.gz
-            onto this panel.
-          </p>
-        </div>
+      <div className="sect">
+        <h3 className="subhead">Your own VCF</h3>
+        <p className="measure mt-2">
+          Not available in this demo. Uploads need the local app, which parses the file on your
+          machine and never sends it anywhere: clone the{" "}
+          <a href={REPO_URL} target="_blank" rel="noreferrer">
+            repository
+          </a>
+          , run <code className="text-[0.95rem]">python run.py</code>, and drop a .vcf or .vcf.gz
+          onto this page.
+        </p>
       </div>
     );
   }
@@ -59,77 +54,74 @@ export function VcfDropzone({ onLoaded, onError, busy, setBusy }: Props) {
   };
 
   return (
-    <div className="sheet">
-      <div className="sheet-head">
-        <span className="sheet-title">Your own VCF</span>
-        <span className="sheet-note">.vcf or .vcf.gz, parsed on this machine, never uploaded</span>
+    <div className="sect">
+      <h3 className="subhead">Your own VCF</h3>
+      <p className="measure note mt-1">
+        .vcf or .vcf.gz, streamed line by line on this machine; nothing is uploaded anywhere.
+      </p>
+
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label="Drop a VCF file here, or press Enter to browse"
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={onDrop}
+        onClick={() => !busy && inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (busy) return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
+        className={[
+          "mt-4 flex cursor-pointer flex-col items-center justify-center border border-dashed px-6 py-8 text-center",
+          dragging ? "border-pen" : "border-ink",
+          busy ? "pointer-events-none opacity-60" : "",
+        ].join(" ")}
+      >
+        <p className="font-slab text-[1.2rem] font-semibold">
+          {busy ? "Parsing" : dragging ? "Release to load" : "Drop a VCF here, or click to browse"}
+        </p>
+        <input
+          ref={inputRef}
+          type="file"
+          accept=".vcf,.gz,.bgz"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) void run(() => api.uploadVcf(f));
+          }}
+        />
       </div>
 
-      <div className="flex flex-col gap-3 px-4 py-4">
-        <div
-          role="button"
-          tabIndex={0}
-          aria-label="Drop a VCF file here, or press Enter to browse"
-          onDragOver={(e) => {
-            e.preventDefault();
-            setDragging(true);
-          }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={onDrop}
-          onClick={() => !busy && inputRef.current?.click()}
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-4">
+        <label htmlFor="vcf-path" className="note shrink-0">
+          Or an absolute path on this machine (zero copy, best for large files)
+        </label>
+        <input
+          id="vcf-path"
+          type="text"
+          value={path}
+          disabled={busy}
+          onChange={(e) => setPath(e.target.value)}
           onKeyDown={(e) => {
-            if (busy) return;
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              inputRef.current?.click();
-            }
+            if (e.key === "Enter" && path.trim()) void run(() => api.loadVcf(path.trim()));
           }}
-          className={[
-            "flex cursor-pointer flex-col items-center justify-center border-2 border-dashed px-6 py-8 text-center",
-            dragging ? "border-pen bg-pen-tint" : "border-rule bg-paper-2",
-            busy ? "pointer-events-none opacity-60" : "",
-          ].join(" ")}
+          className="input font-mono text-[0.95rem]"
+        />
+        <button
+          type="button"
+          disabled={busy || !path.trim()}
+          onClick={() => void run(() => api.loadVcf(path.trim()))}
+          className="btn shrink-0"
         >
-          <p className="m-0 font-slab text-[1.2rem] font-semibold">
-            {busy ? "Parsing" : dragging ? "Release to load" : "Drop a VCF here, or click to browse"}
-          </p>
-          <p className="m-0 mt-1 text-[0.95rem] text-ink-2">Streamed line by line; nothing leaves this machine.</p>
-          <input
-            ref={inputRef}
-            type="file"
-            accept=".vcf,.gz,.bgz"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) void run(() => api.uploadVcf(f));
-            }}
-          />
-        </div>
-
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <label htmlFor="vcf-path" className="field-label shrink-0">
-            Or an absolute path on this machine (zero copy, best for large files)
-          </label>
-          <input
-            id="vcf-path"
-            type="text"
-            value={path}
-            disabled={busy}
-            onChange={(e) => setPath(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && path.trim()) void run(() => api.loadVcf(path.trim()));
-            }}
-            className="input font-mono text-[0.95rem]"
-          />
-          <button
-            type="button"
-            disabled={busy || !path.trim()}
-            onClick={() => void run(() => api.loadVcf(path.trim()))}
-            className="btn shrink-0"
-          >
-            Load path
-          </button>
-        </div>
+          Load path
+        </button>
       </div>
     </div>
   );

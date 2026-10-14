@@ -4,51 +4,63 @@ import { api, IS_DEMO, REPO_URL } from "./lib/api";
 import { VcfDropzone } from "./components/VcfDropzone";
 import { SamplePicker } from "./components/SamplePicker";
 import { VariantTable } from "./components/VariantTable";
-import { DbBadge } from "./components/DbBadge";
+import { DbStatus } from "./components/DbStatus";
 import { PhenotypeInput } from "./components/PhenotypeInput";
 import { TermEditor } from "./components/TermEditor";
 import { ResultsSection } from "./components/ResultsSection";
+import { InkStamp } from "./components/InkStamp";
 
-function Field({ label, value }: { label: string; value: string | number }) {
+function FormField({ label, value, title }: { label: string; value: string; title?: string }) {
   return (
-    <div className="field">
-      <span className="field-label">{label}</span>
-      <span className="field-value" title={String(value)}>
-        {value}
-      </span>
+    <div className="form-field">
+      <dt>{label}</dt>
+      <dd title={title ?? value}>{value}</dd>
     </div>
   );
 }
 
-function PartHeading({ no, title, desc }: { no: string; title: string; desc: string }) {
-  return (
-    <div className="part-heading">
-      <span className="part-no">Part {no}</span>
-      <h2>{title}</h2>
-      <span className="part-desc hidden sm:inline">{desc}</span>
-    </div>
-  );
+function fmtDate(d: Date): string {
+  return `${d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}, ${d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}`;
 }
 
 function SpecimenSummary({ s, onReset }: { s: VcfSummary; onReset: () => void }) {
   const fname = s.file_path.split(/[\\/]/).pop() ?? s.file_path;
   return (
-    <div className="sheet">
-      <div className="sheet-head">
-        <span className="sheet-title">Specimen received</span>
-        <span className="stamp stamp-pass stamp-press">Received</span>
-        <button type="button" onClick={onReset} className="btn btn-ruled btn-sm ml-auto">
+    <div className="measure">
+      <p>
+        <span className="font-mono">{fname}</span> was received and parsed in{" "}
+        <span className="font-mono">{s.parse_time_ms} ms</span>:{" "}
+        <span className="font-mono">{s.total_variants.toLocaleString()}</span> variant records for
+        sample <span className="font-mono">{s.sample_name ?? "not stated"}</span>, called against{" "}
+        <span className="font-mono">{s.reference ?? "an unstated reference"}</span>
+        {s.multiallelic_records > 0 ? (
+          <>
+            , <span className="font-mono">{s.multiallelic_records.toLocaleString()}</span> of them
+            multiallelic
+          </>
+        ) : (
+          ", none multiallelic"
+        )}
+        {s.skipped_lines > 0 ? (
+          <>
+            ; <span className="font-mono">{s.skipped_lines.toLocaleString()}</span> lines were skipped.
+          </>
+        ) : (
+          "."
+        )}
+      </p>
+      {s.warnings.length > 0 && (
+        <ul className="m-0 mt-2 list-disc pl-5 text-[0.95rem] text-ink-2">
+          {s.warnings.map((w, i) => (
+            <li key={i}>{w}</li>
+          ))}
+        </ul>
+      )}
+      <p className="note mt-2">
+        <button type="button" onClick={onReset} className="btn-text">
           Change specimen
         </button>
-      </div>
-      <div className="grid grid-cols-2 gap-x-6 gap-y-3 px-4 py-3 sm:grid-cols-3 lg:grid-cols-6">
-        <Field label="File" value={fname} />
-        <Field label="Variants" value={s.total_variants.toLocaleString()} />
-        <Field label="Sample" value={s.sample_name ?? "not stated"} />
-        <Field label="Reference" value={s.reference ?? "not stated"} />
-        <Field label="Multiallelic rows" value={s.multiallelic_records.toLocaleString()} />
-        <Field label="Parse time" value={`${s.parse_time_ms} ms`} />
-      </div>
+      </p>
     </div>
   );
 }
@@ -69,6 +81,7 @@ export default function App() {
   const [candidates, setCandidates] = useState<HpoCandidate[]>([]);
   const [terms, setTerms] = useState<HpoTerm[]>([]);
   const [confirmed, setConfirmed] = useState(false);
+  const [scoredAt, setScoredAt] = useState<Date | null>(null);
 
   // Demo deep link: ?case=<id> opens with that sample loaded, mapped and scored.
   const autoConfirm = useRef(false);
@@ -108,6 +121,7 @@ export default function App() {
     try {
       const sum = await api.loadSample(s.id);
       setSummary(sum);
+      setScoredAt(null);
       setPhenoSeed({ text: s.phenotype, nonce: Date.now() });
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -132,132 +146,142 @@ export default function App() {
     setConfirmed(false);
   }, []);
 
+  const resetSpecimen = () => {
+    setSummary(null);
+    setScoredAt(null);
+  };
+
   const dbSig =
     dbStatus
       ?.filter((s) => s.present)
       .map((s) => `${s.source}:${s.snapshot_date}`)
       .join("|") ?? "none";
+  const dbMissing = dbStatus !== null && !dbStatus.some((s) => s.present);
+
+  const fname = summary ? (summary.file_path.split(/[\\/]/).pop() ?? summary.file_path) : "";
+  const indication = terms.length > 0 ? terms.map((t) => t.label).join("; ") : "";
 
   return (
-    <div className="mx-auto w-full max-w-[1180px] px-4 pb-16 pt-6 sm:px-6">
-      {/* Masthead */}
-      <header className="border-b-2 border-ink pb-4">
-        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+    <div className="page">
+      {/* Masthead: wordmark, then the ruled field block of a requisition. */}
+      <header>
+        <div className="flex flex-wrap items-start justify-between gap-x-8 gap-y-5">
           <div className="min-w-0">
-            <h1 className="font-slab text-[2.4rem] font-bold leading-none tracking-tight sm:text-[2.9rem]">
-              PhenoTrace
-            </h1>
-            <p className="mt-2 max-w-[62ch] text-[1.0625rem] leading-snug text-ink-2">
-              Describe a patient's symptoms, and PhenoTrace maps them to HPO terms and ranks the
-              variants in their VCF by likely causality, with every score broken into named factors.
-            </p>
+            <h1 className="wordmark">PhenoTrace</h1>
+            <p className="wordmark-sub">Phenotype-driven variant triage worksheet</p>
           </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.95rem]">
-            <span>by Bryan Cheng</span>
-            <a href={REPO_URL} target="_blank" rel="noreferrer">
-              Source on GitHub
-            </a>
-            {IS_DEMO ? (
-              <span className="stamp stamp-violet">Demo</span>
-            ) : (
-              <span className="stamp stamp-pass">Local only</span>
-            )}
-          </div>
+          <InkStamp text="Not a diagnostic device" className="mt-1" />
         </div>
-        {IS_DEMO && (
-          <p className="mt-3 max-w-[90ch] border-l-4 border-violet pl-3 text-ink-2">
-            This is the bundled demo: three recorded sample cases, scored in the browser from data
-            captured off the real backend. Your own VCF needs the local app; see the{" "}
-            <a href={REPO_URL} target="_blank" rel="noreferrer">
-              repository
-            </a>
-            .
-          </p>
-        )}
+
+        <dl className="form-fields">
+          <FormField label="Specimen" value={fname} />
+          <FormField label="Indication" value={indication} />
+          <FormField label="Reference" value={summary?.reference ?? ""} />
+          <FormField label="Date scored" value={scoredAt ? fmtDate(scoredAt) : ""} />
+          <FormField label="Variants" value={summary ? summary.total_variants.toLocaleString() : ""} />
+          <FormField label="Mode" value={IS_DEMO ? "demo, recorded cases" : "local, nothing leaves this machine"} />
+        </dl>
+
+        <p className="measure mt-7">
+          Decision-support and research tool only. Rankings are hypotheses to investigate, not
+          clinical conclusions.
+          {IS_DEMO && (
+            <>
+              {" "}
+              This build is the bundled demo: three recorded sample cases, scored in the browser from
+              data captured off the real backend. Your own VCF needs the local app; see the{" "}
+              <a href={REPO_URL} target="_blank" rel="noreferrer">
+                repository
+              </a>
+              .
+            </>
+          )}
+          {dbMissing && " No annotation databases are installed yet; see Reference data at the foot of this page."}
+        </p>
       </header>
 
-      {/* Disclaimer and database provenance */}
-      <div className="mt-5 flex flex-col gap-3">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border border-stamp px-4 py-2.5">
-          <span className="stamp">Not a diagnostic device</span>
-          <p className="m-0 leading-snug">
-            Decision-support and research tool only. Rankings are hypotheses to investigate, not
-            clinical conclusions.
-          </p>
-        </div>
-        <DbBadge status={dbStatus} onInstall={installDbs} installing={installing} />
-      </div>
-
       {error && (
-        <div
-          role="alert"
-          className="mt-4 flex items-start gap-3 border border-stamp bg-stamp-tint px-4 py-3 text-[0.95rem] text-stamp"
-        >
-          <span className="font-slab font-bold">Error</span>
-          <span>{error}</span>
-        </div>
+        <p role="alert" className="measure mt-5 text-[0.95rem] text-stamp">
+          <span className="font-slab font-bold">Error. </span>
+          {error}
+        </p>
       )}
 
-      <div className="mt-8 flex flex-col gap-10">
-        <section className="flex flex-col gap-4">
-          <PartHeading no="1" title="Specimen" desc="the patient VCF" />
-          {summary ? (
-            <>
-              <SpecimenSummary s={summary} onReset={() => setSummary(null)} />
-              <VariantTable
-                key={`${summary.file_path}:${summary.total_variants}:${dbSig}`}
-                summary={summary}
-              />
-            </>
-          ) : (
-            <div className="flex flex-col gap-4">
-              <SamplePicker
-                samples={samples}
-                onPick={onPickSample}
-                loadingId={loadingSampleId}
-                busy={busy}
-              />
-              <VcfDropzone onLoaded={setSummary} onError={setError} busy={busy} setBusy={setBusy} />
-            </div>
-          )}
-        </section>
+      <section className="doc-section">
+        <h2 className="running-head">
+          Specimen
+        </h2>
+        {summary ? (
+          <>
+            <SpecimenSummary s={summary} onReset={resetSpecimen} />
+            <VariantTable
+              key={`${summary.file_path}:${summary.total_variants}:${dbSig}`}
+              summary={summary}
+            />
+          </>
+        ) : (
+          <>
+            <SamplePicker
+              samples={samples}
+              onPick={onPickSample}
+              loadingId={loadingSampleId}
+              busy={busy}
+            />
+            <VcfDropzone onLoaded={setSummary} onError={setError} busy={busy} setBusy={setBusy} />
+          </>
+        )}
+      </section>
 
-        <section className="flex flex-col gap-4">
-          <PartHeading no="2" title="Clinical indication" desc="symptoms, mapped to HPO terms" />
-          <PhenotypeInput onMapped={onMapped} seed={phenoSeed} />
-          <TermEditor
-            text={phenoText}
-            candidates={candidates}
-            terms={terms}
-            confirmed={confirmed}
-            onChange={onTermsChange}
-            onConfirm={() => setConfirmed(true)}
-          />
-        </section>
+      <section className="doc-section">
+        <h2 className="running-head">
+          Clinical indication
+        </h2>
+        <PhenotypeInput onMapped={onMapped} seed={phenoSeed} />
+        <TermEditor
+          text={phenoText}
+          candidates={candidates}
+          terms={terms}
+          confirmed={confirmed}
+          onChange={onTermsChange}
+          onConfirm={() => setConfirmed(true)}
+        />
+      </section>
 
-        <section className="flex flex-col gap-4">
-          <PartHeading no="3" title="Triage worksheet" desc="ranked variants and their reasons" />
-          {!summary ? (
-            <p className="sheet m-0 px-4 py-3 text-ink-2">
-              Waiting on a specimen. Load a sample case in Part 1 to enable ranking.
-            </p>
-          ) : !confirmed ? (
-            <p className="sheet m-0 px-4 py-3 text-ink-2">
-              Waiting on a confirmed indication. Confirm the HPO terms in Part 2 to rank variants.
-            </p>
-          ) : (
-            <ResultsSection termIds={terms.map((t) => t.id)} />
-          )}
-        </section>
-      </div>
+      <section className="doc-section">
+        <h2 className="running-head">
+          Triage worksheet
+        </h2>
+        {!summary ? (
+          <p className="measure italic text-ink-2">
+            Waiting on a specimen. Load a sample case under Specimen to enable ranking.
+          </p>
+        ) : !confirmed ? (
+          <p className="measure italic text-ink-2">
+            Waiting on a confirmed indication. Confirm the HPO terms under Clinical indication to
+            rank variants.
+          </p>
+        ) : (
+          <ResultsSection termIds={terms.map((t) => t.id)} onScored={setScoredAt} />
+        )}
+      </section>
 
-      <footer className="mt-14 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-t border-rule pt-4 text-[0.95rem] text-ink-2">
+      <section className="doc-section">
+        <h2 className="running-head">
+          Reference data
+        </h2>
+        <DbStatus status={dbStatus} onInstall={installDbs} installing={installing} />
+      </section>
+
+      <footer className="mt-14 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-t border-ink pt-3 text-[0.95rem] text-ink-2">
         <span>
-          <span className="font-slab font-semibold text-ink">PhenoTrace</span>, local-first
-          phenotype-driven variant triage. Decision support, not diagnosis.
+          <span className="font-slab font-semibold text-ink">PhenoTrace</span>, by Bryan Cheng.
+          Local-first phenotype-driven variant triage; decision support, not diagnosis.
         </span>
         <span>
-          {IS_DEMO ? "Static demo build; no server, no uploads." : "No patient data leaves this machine."}
+          {IS_DEMO ? "Static demo build; no server, no uploads. " : "No patient data leaves this machine. "}
+          <a href={REPO_URL} target="_blank" rel="noreferrer">
+            Source on GitHub
+          </a>
         </span>
       </footer>
     </div>

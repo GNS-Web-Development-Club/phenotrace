@@ -8,6 +8,9 @@ interface Props {
   onSelect: (id: string) => void;
 }
 
+const GRID =
+  "grid grid-flow-dense grid-cols-[2.4rem_1fr_4.5rem] items-baseline gap-x-3 sm:grid-cols-[2.4rem_minmax(5rem,8rem)_1fr_4.5rem]";
+
 export function ResultsList({ result, selectedId, onSelect }: Props) {
   const [filter, setFilter] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
@@ -46,49 +49,54 @@ export function ResultsList({ result, selectedId, onSelect }: Props) {
   };
 
   return (
-    <div className="sheet flex min-h-0 flex-col">
-      <div className="sheet-head">
-        <span className="sheet-title">Ranked variants</span>
-        <span className="sheet-note font-mono">
+    <div className="sect">
+      <h3 className="subhead">
+        Ranked variants
+        <span className="head-note">
           {st.returned} of {st.scored} scored, {st.total} total
           {prefiltered > 0 && `, ${prefiltered} pre-filtered`}
         </span>
-        {!st.annotations_available && (
-          <span className="stamp stamp-violet ml-auto">No annotation DB</span>
-        )}
-      </div>
+      </h3>
+      {!st.annotations_available && (
+        <p className="note mt-1">No annotation database is installed; only file-level factors are scored.</p>
+      )}
 
-      <div className="flex flex-col gap-3 border-b border-rule px-4 py-3">
-        <div className="field">
-          <label htmlFor="rank-filter" className="field-label">
-            Filter by gene or locus
-          </label>
-          <input id="rank-filter" value={filter} onChange={(e) => setFilter(e.target.value)} className="input" autoComplete="off" />
+      {result.results.length >= 3 && (
+        <div className="mt-4">
+          <ScoreDistribution results={result.results} max={max} selectedId={selectedId} onSelect={onSelect} />
         </div>
-        {result.results.length >= 3 && (
-          <div>
-            <div className="flex items-baseline justify-between text-[0.875rem] text-ink-2">
-              <span>Score distribution, rank order</span>
-              <span className="font-mono">
-                {result.results[0]?.breakdown.composite.toFixed(2)} to{" "}
-                {result.results[result.results.length - 1]?.breakdown.composite.toFixed(2)}
-              </span>
-            </div>
-            <ScoreDistribution results={result.results} max={max} selectedId={selectedId} onSelect={onSelect} />
-          </div>
-        )}
+      )}
+
+      <div className="mt-5 flex max-w-md flex-wrap items-baseline gap-x-4 gap-y-1 text-[0.95rem]">
+        <label htmlFor="rank-filter" className="shrink-0 text-ink-2">
+          Filter by gene or locus
+        </label>
+        <input
+          id="rank-filter"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="input min-w-0 flex-1 text-[0.95rem]"
+          autoComplete="off"
+        />
       </div>
 
       <div
         ref={listRef}
-        className="flex-1 overflow-auto outline-none"
+        className="mt-4 max-h-[40rem] overflow-auto outline-none"
         tabIndex={0}
         role="listbox"
         aria-label="Ranked variants; use the arrow keys to move"
         onKeyDown={onKeyDown}
       >
+        <div className={`${GRID} rule-head py-1.5 text-[0.9rem] font-medium text-ink-2`}>
+          <span className="text-right">Rank</span>
+          <span>Gene</span>
+          <span className="hidden sm:block">Locus and reason</span>
+          <span className="text-right">Score</span>
+        </div>
+
         {shown.length === 0 && (
-          <p className="m-0 px-4 py-8 text-center text-ink-2">
+          <p className="py-8 text-center text-ink-2">
             {result.results.length === 0
               ? "No variants passed the pre-filter. Turn it off, or widen the phenotype."
               : `No ranked variant matches "${filter}".`}
@@ -108,20 +116,20 @@ export function ResultsList({ result, selectedId, onSelect }: Props) {
                   role="option"
                   aria-selected={selected}
                   aria-label={`Rank ${rank + 1}: ${sv.annotation.gene ?? "unknown gene"}, score ${sv.breakdown.composite.toFixed(3)}`}
-                  className="row-btn px-4 py-2.5"
+                  className={`row-btn ${GRID} py-2 pl-2`}
                 >
-                  <span className="flex items-baseline gap-3">
-                    <span className="w-7 shrink-0 font-mono text-[0.95rem] text-ink-2">{rank + 1}.</span>
-                    <span className="w-[6rem] shrink-0 truncate font-slab text-[1.1rem] font-semibold italic">
-                      {sv.annotation.gene ?? "no gene"}
-                    </span>
-                    <span className="min-w-0 flex-1 truncate font-mono text-[0.9rem] text-ink-2">{sv.variant.id}</span>
-                    <span className="shrink-0 font-mono font-medium">{sv.breakdown.composite.toFixed(3)}</span>
+                  <span className="block text-right font-mono text-[0.95rem] text-ink-2">{rank + 1}</span>
+                  <span className={`block truncate font-slab text-[1.15rem] font-semibold italic ${selected ? "text-pen" : ""}`}>
+                    {sv.annotation.gene ?? "no gene"}
                   </span>
-                  <span className="mt-1.5 block h-[6px] w-full bg-paper-3" aria-hidden="true">
-                    <span className={`block h-full ${selected ? "bg-pen" : "bg-ink"}`} style={{ width: `${pct}%` }} />
+                  <span className="col-span-2 col-start-2 block min-w-0 sm:col-span-1 sm:col-start-auto">
+                    <span className="block truncate font-mono text-[0.95rem]">{sv.variant.id}</span>
+                    <span className="block text-[0.95rem] leading-snug text-ink-2 sm:truncate">{sv.headline}</span>
                   </span>
-                  <span className="mt-1 block truncate text-[0.875rem] leading-snug text-ink-2">{sv.headline}</span>
+                  <span className="block text-right">
+                    <span className="block font-mono text-[1.05rem] font-medium">{sv.breakdown.composite.toFixed(3)}</span>
+                    <span className="mt-1 ml-auto block h-px bg-ink" style={{ width: `${pct}%` }} aria-hidden="true" />
+                  </span>
                 </button>
               </li>
             );

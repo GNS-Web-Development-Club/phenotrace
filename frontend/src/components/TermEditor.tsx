@@ -12,16 +12,16 @@ interface Props {
 }
 
 const SOURCE_LABEL: Record<string, string> = {
-  label: "matched label",
-  synonym: "matched synonym",
-  layterm: "matched lay term",
+  label: "matched the HPO label",
+  synonym: "matched a synonym",
+  layterm: "matched a lay term",
   added: "added by hand",
 };
 
 const MARK_CLASS: Record<string, string> = {
-  label: "decoration-pen",
-  synonym: "decoration-violet",
-  layterm: "decoration-ochre",
+  label: "match",
+  synonym: "match match-synonym",
+  layterm: "match match-layterm",
 };
 
 function HighlightedText({ text, cands }: { text: string; cands: HpoCandidate[] }) {
@@ -38,9 +38,7 @@ function HighlightedText({ text, cands }: { text: string; cands: HpoCandidate[] 
       <mark
         key={`m${i}`}
         title={`${c.term.label} (${c.term.id}), ${SOURCE_LABEL[c.source] ?? c.source}`}
-        className={`bg-transparent text-ink underline decoration-[3px] underline-offset-[4px] ${
-          MARK_CLASS[c.source] ?? "decoration-ochre"
-        }`}
+        className={MARK_CLASS[c.source] ?? "match match-layterm"}
       >
         {text.slice(c.span_start, c.span_end)}
       </mark>,
@@ -51,10 +49,11 @@ function HighlightedText({ text, cands }: { text: string; cands: HpoCandidate[] 
   if (cursor < text.length) parts.push(<span key="tail">{text.slice(cursor)}</span>);
 
   return (
-    <div className="border-l-4 border-rule pl-3">
-      <p className="m-0 leading-relaxed">{parts}</p>
-      <p className="m-0 mt-1 text-[0.875rem] text-ink-2">
-        Underlined phrases were matched. Blue: HPO label; violet: synonym; ochre: lay term.
+    <div className="measure">
+      <p className="font-slab text-[1.15rem] leading-relaxed">{parts}</p>
+      <p className="caption">
+        Underlined phrases were matched: a single rule for an HPO label, a double rule for a
+        synonym, a dotted rule for a lay term.
       </p>
     </div>
   );
@@ -101,53 +100,64 @@ export function TermEditor({ text, candidates, terms, confirmed, onChange, onCon
   const remove = (id: string) => onChange(terms.filter((t) => t.id !== id));
 
   return (
-    <div className="sheet">
-      <div className="sheet-head">
-        <span className="sheet-title">HPO terms</span>
-        {terms.length > 0 && (
-          <span className="sheet-note font-mono">{terms.length} selected</span>
-        )}
-        {confirmed && <span className="stamp stamp-pass stamp-press ml-auto">Confirmed</span>}
-      </div>
+    <div className="sect">
+      <h3 className="subhead">
+        HPO terms
+        {terms.length > 0 && <span className="head-note">{terms.length} selected</span>}
+      </h3>
 
-      <div className="flex flex-col gap-4 px-4 py-4">
+      <div className="mt-3 flex flex-col gap-5">
         {text && candidates.length > 0 && <HighlightedText text={text} cands={candidates} />}
 
         {terms.length === 0 ? (
-          <p className="m-0 text-ink-2">
+          <p className="measure text-ink-2">
             No terms yet. Map a clinical description above, or search below to add terms by hand.
           </p>
         ) : (
-          <ul className="m-0 list-none p-0">
-            {terms.map((t, i) => {
-              const src = sourceById.get(t.id) ?? "added";
-              return (
-                <li
-                  key={t.id}
-                  className={`flex flex-wrap items-baseline gap-x-3 gap-y-1 py-1.5 ${
-                    i < terms.length - 1 ? "ruled-row" : ""
-                  }`}
-                >
-                  <span className="font-mono text-[0.95rem] text-ink-2">{t.id}</span>
-                  <span className="font-medium">{t.label}</span>
-                  <span className="text-[0.875rem] text-ink-2">{SOURCE_LABEL[src] ?? src}</span>
-                  <button
-                    type="button"
-                    onClick={() => remove(t.id)}
-                    className="ml-auto text-[0.875rem] text-pen underline underline-offset-[3px]"
-                    aria-label={`Remove ${t.label}`}
-                  >
-                    remove
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          <table className="ruled max-w-[52rem]">
+            <thead>
+              <tr>
+                <th className="w-[7.5rem]">Term</th>
+                <th>Label</th>
+                <th className="hidden sm:table-cell">Provenance</th>
+                <th className="w-[4.5rem]">
+                  <span className="sr-only">Remove</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {terms.map((t) => {
+                const src = sourceById.get(t.id) ?? "added";
+                return (
+                  <tr key={t.id}>
+                    <td className="font-mono text-ink-2">{t.id}</td>
+                    <td className="font-medium">
+                      {t.label}
+                      <span className="block text-[0.9rem] font-normal text-ink-2 sm:hidden">
+                        {SOURCE_LABEL[src] ?? src}
+                      </span>
+                    </td>
+                    <td className="hidden text-ink-2 sm:table-cell">{SOURCE_LABEL[src] ?? src}</td>
+                    <td className="text-right">
+                      <button
+                        type="button"
+                        onClick={() => remove(t.id)}
+                        className="btn-text text-[0.95rem]"
+                        aria-label={`Remove ${t.label}`}
+                      >
+                        remove
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         )}
 
         <div ref={boxRef} className="relative max-w-md">
-          <label htmlFor="hpo-search" className="field-label">
-            Add a term (search the HPO vocabulary)
+          <label htmlFor="hpo-search" className="note">
+            Add a term by searching the HPO vocabulary
           </label>
           <input
             id="hpo-search"
@@ -157,7 +167,7 @@ export function TermEditor({ text, candidates, terms, confirmed, onChange, onCon
               setOpen(true);
             }}
             onFocus={() => setOpen(true)}
-            className="input mt-1"
+            className="input"
             autoComplete="off"
           />
           {open && results.length > 0 && (
@@ -179,7 +189,7 @@ export function TermEditor({ text, candidates, terms, confirmed, onChange, onCon
                     >
                       <span className="font-mono text-[0.9rem] text-ink-2">{t.id}</span>
                       <span className="truncate">{t.label}</span>
-                      {added && <span className="ml-auto text-[0.875rem] text-ink-2">added</span>}
+                      {added && <span className="ml-auto text-[0.9rem] text-ink-2">added</span>}
                     </button>
                   </li>
                 );
@@ -188,21 +198,18 @@ export function TermEditor({ text, candidates, terms, confirmed, onChange, onCon
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={terms.length === 0 || confirmed}
-            className="btn"
-          >
-            {confirmed
-              ? "Indication confirmed"
-              : `Confirm ${terms.length} term${terms.length === 1 ? "" : "s"}`}
-          </button>
-          {confirmed && (
-            <span className="text-[0.95rem] text-ink-2">Edit the terms to re-open the query.</span>
-          )}
-        </div>
+        {confirmed ? (
+          <p className="measure">
+            <span className="font-slab font-semibold">Indication confirmed.</span> The worksheet
+            below is scored against these {terms.length} terms; editing them re-opens the query.
+          </p>
+        ) : (
+          <div>
+            <button type="button" onClick={onConfirm} disabled={terms.length === 0} className="btn">
+              {`Confirm ${terms.length} term${terms.length === 1 ? "" : "s"}`}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

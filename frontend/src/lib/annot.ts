@@ -1,30 +1,43 @@
 // Shared annotation formatting/classification helpers (pure).
+// Categorical values are written out as words; the only accent is the
+// pathogenic class, set in the stamp red.
 
 export type ClnTone = "path" | "benign" | "vus" | "conflict" | "none";
 
-export function clnsigCategory(clnsig: string | null): { short: string; tone: ClnTone } {
-  if (!clnsig) return { short: "none", tone: "none" };
+export function clnsigCategory(clnsig: string | null): { label: string; tone: ClnTone } {
+  if (!clnsig) return { label: "none", tone: "none" };
   const s = clnsig.toLowerCase();
-  if (s.includes("conflict")) return { short: "CONF", tone: "conflict" };
+  if (s.includes("conflict")) return { label: "Conflicting", tone: "conflict" };
   // order matters: "likely_pathogenic" contains "pathogenic"
   if (s.includes("likely_pathogenic") || s.includes("likely pathogenic"))
-    return { short: "LP", tone: "path" };
-  if (s.includes("pathogenic")) return { short: "P", tone: "path" };
+    return { label: "Likely pathogenic", tone: "path" };
+  if (s.includes("pathogenic")) return { label: "Pathogenic", tone: "path" };
   if (s.includes("likely_benign") || s.includes("likely benign"))
-    return { short: "LB", tone: "benign" };
-  if (s.includes("benign")) return { short: "B", tone: "benign" };
-  if (s.includes("uncertain")) return { short: "VUS", tone: "vus" };
-  return { short: clnsig.slice(0, 4).toUpperCase(), tone: "none" };
+    return { label: "Likely benign", tone: "benign" };
+  if (s.includes("benign")) return { label: "Benign", tone: "benign" };
+  if (s.includes("uncertain")) return { label: "VUS", tone: "vus" };
+  return { label: clnsig.replace(/_/g, " "), tone: "none" };
 }
 
-/** Code-box colour class per ClinVar tone (see .code-* in index.css). */
+/** Text classes per ClinVar tone: ink for everything, red for the dangerous class. */
 export const clnToneClass: Record<ClnTone, string> = {
-  path: "code code-red",
-  benign: "code code-green",
-  vus: "code code-ochre",
-  conflict: "code code-violet",
-  none: "code code-mute",
+  path: "text-stamp font-medium",
+  benign: "",
+  vus: "",
+  conflict: "italic",
+  none: "text-ink-2",
 };
+
+const ZYG: Record<string, string> = {
+  het: "heterozygous",
+  hom: "homozygous",
+  hemi: "hemizygous",
+};
+
+export function zygosityLabel(z: string | null): string {
+  if (!z) return "n/a";
+  return ZYG[z] ?? z;
+}
 
 export function fmtAF(af: number | null): string {
   if (af === null || af === undefined) return "absent";

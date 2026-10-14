@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
 /* =========================================================================
-   PhenoTrace: specimen requisition worksheet.
-   Carbonless form stock, ruled fields, rubber-stamp statuses, mono data.
-   Type: Zilla Slab (form headings), IBM Plex Sans (body), IBM Plex Mono (data).
+   PhenoTrace: a typeset triage worksheet.
+   One measure on paper. Sections are separated by whitespace and a heavy
+   running head, tables are ruled rows with no frame, categorical values are
+   written out as words, and the only ornament is one inked stamp.
+   Type: Zilla Slab (heads), IBM Plex Sans (body), IBM Plex Mono (data).
    ========================================================================= */
 
 @theme {
@@ -21,13 +23,6 @@
   --color-pen: #1c4c8a;
   --color-pen-tint: #dde6f2;
   --color-stamp: #a3281c;
-  --color-stamp-tint: #f3dcd8;
-  --color-violet: #3b3f8f;
-  --color-violet-tint: #dcdff0;
-  --color-pass: #2a6240;
-  --color-pass-tint: #d9e8dc;
-  --color-ochre: #7a5a0e;
-  --color-ochre-tint: #f0e6c8;
 }
 
 :root {
@@ -73,143 +68,217 @@ a {
   text-underline-offset: 3px;
 }
 
-/* ---- Form chrome ------------------------------------------------------- */
+@layer base {
+  p {
+    margin: 0;
+  }
+}
 
 @layer components {
-  /* A ruled block of the worksheet: one solid rule on top, lighter below. */
-  .sheet {
-    border: 1px solid var(--color-rule);
-    background-color: var(--color-paper);
-  }
-  .sheet-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.5rem 1rem;
-    padding: 0.55rem 1rem;
-    border-bottom: 1px solid var(--color-rule);
-    background-color: var(--color-paper-2);
-  }
-  .sheet-title {
-    font-family: var(--font-slab);
-    font-weight: 600;
-    font-size: 1.05rem;
-    line-height: 1.2;
-    color: var(--color-ink);
-  }
-  .sheet-note {
-    font-size: 0.875rem;
-    color: var(--color-ink-2);
-  }
-
-  /* Form field: caption above a ruled value line. */
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    min-width: 0;
-  }
-  .field-label {
-    font-size: 0.875rem;
-    line-height: 1.3;
-    color: var(--color-ink-2);
-  }
-  .field-value {
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-    font-size: 0.95rem;
-    line-height: 1.4;
-    color: var(--color-ink);
-    border-bottom: 1px solid var(--color-rule);
-    padding-bottom: 0.15rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  /* ---- Page ---------------------------------------------------------- */
+  .page {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 2.75rem 2.5rem 5rem;
   }
   @media (max-width: 640px) {
-    .field-value {
-      white-space: normal;
-      overflow-wrap: anywhere;
+    .page {
+      padding: 1.5rem 1rem 4rem;
     }
   }
 
-  /* Rubber stamp. */
-  .stamp {
-    display: inline-block;
-    padding: 0.1rem 0.5rem;
-    border: 2px solid currentColor;
-    outline: 1px solid currentColor;
-    outline-offset: 2px;
+  .measure {
+    max-width: 72ch;
+  }
+
+  /* ---- Masthead ------------------------------------------------------ */
+  .wordmark {
+    margin: 0;
     font-family: var(--font-slab);
     font-weight: 700;
-    font-size: 0.875rem;
-    letter-spacing: 0.08em;
-    line-height: 1.35;
-    text-transform: uppercase;
-    white-space: nowrap;
-    transform: rotate(-2.5deg);
-    color: var(--color-stamp);
+    font-size: 3.4rem;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
   }
-  .stamp-violet {
-    color: var(--color-violet);
+  @media (max-width: 640px) {
+    .wordmark {
+      font-size: 2.6rem;
+    }
   }
-  .stamp-pass {
-    color: var(--color-pass);
-  }
-  .stamp-lg {
-    font-size: 1.1rem;
-    padding: 0.2rem 0.8rem;
-  }
-  .stamp-press {
-    animation: stamp-press 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
-  }
-
-  /* Small square code box used for categorical values (P / LP / het / PASS). */
-  .code {
-    display: inline-block;
-    min-width: 2.6rem;
-    padding: 0.05rem 0.35rem;
-    border: 1px solid currentColor;
-    font-family: var(--font-mono);
-    font-weight: 500;
-    font-size: 0.875rem;
-    line-height: 1.35;
-    text-align: center;
-    white-space: nowrap;
-  }
-  .code-red {
-    color: var(--color-stamp);
-    background-color: var(--color-stamp-tint);
-  }
-  .code-green {
-    color: var(--color-pass);
-    background-color: var(--color-pass-tint);
-  }
-  .code-ochre {
-    color: var(--color-ochre);
-    background-color: var(--color-ochre-tint);
-  }
-  .code-violet {
-    color: var(--color-violet);
-    background-color: var(--color-violet-tint);
-  }
-  .code-pen {
-    color: var(--color-pen);
-    background-color: var(--color-pen-tint);
-  }
-  .code-mute {
+  .wordmark-sub {
+    margin-top: 0.5rem;
+    font-family: var(--font-slab);
+    font-style: italic;
+    font-size: 1.2rem;
     color: var(--color-ink-2);
-    border-color: var(--color-rule);
-    background-color: transparent;
   }
 
-  /* Buttons: solid ink for the primary action, ruled for secondary. */
+  /* The ruled block of fields at the head of a requisition. */
+  .form-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 3rem;
+    margin: 1.4rem 0 0;
+    padding-top: 0.2rem;
+    border-top: 3px solid var(--color-ink);
+  }
+  @media (max-width: 640px) {
+    .form-fields {
+      grid-template-columns: 1fr;
+    }
+  }
+  .form-field {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 0.5rem 0 0.4rem;
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .form-field dt {
+    flex: 0 0 7rem;
+    font-size: 0.875rem;
+    line-height: 1.3;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-ink-2);
+  }
+  .form-field dd {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 1.45em;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  /* ---- Running heads ------------------------------------------------- */
+  .doc-section {
+    margin-top: 3.5rem;
+  }
+  .running-head {
+    margin: 0 0 1.4rem;
+    padding-top: 0.5rem;
+    border-top: 3px solid var(--color-ink);
+    font-family: var(--font-slab);
+    font-weight: 700;
+    font-size: 2.1rem;
+    line-height: 1.1;
+  }
+  .running-head .head-note {
+    display: block;
+    margin-top: 0.25rem;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: var(--color-ink-2);
+  }
+  .subhead {
+    margin: 0;
+    font-family: var(--font-slab);
+    font-weight: 600;
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+  .subhead .head-note {
+    margin-left: 0.6rem;
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.95rem;
+    color: var(--color-ink-2);
+  }
+  @media (max-width: 640px) {
+    .subhead .head-note {
+      display: block;
+      margin: 0.15rem 0 0;
+    }
+  }
+  .sect {
+    margin-top: 2.25rem;
+  }
+  .note {
+    font-size: 0.95rem;
+    color: var(--color-ink-2);
+  }
+  .caption {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--color-ink-2);
+  }
+
+  /* ---- Ruled tables: horizontal rules only, no frame, no fill. ------- */
+  .ruled {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  .ruled th {
+    padding: 0.3rem 0.75rem 0.35rem 0;
+    border-bottom: 1px solid var(--color-ink);
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--color-ink-2);
+    vertical-align: bottom;
+  }
+  .ruled td {
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    border-bottom: 1px solid var(--color-rule-2);
+    vertical-align: top;
+  }
+  .ruled th:last-child,
+  .ruled td:last-child {
+    padding-right: 0;
+  }
+  .ruled .num {
+    text-align: right;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .ruled-row {
+    border-bottom: 1px solid var(--color-rule-2);
+  }
+  .rule-head {
+    border-bottom: 1px solid var(--color-ink);
+  }
+
+  /* Key-value rows (annotation detail). */
+  .kv {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--color-rule-2);
+    font-size: 0.95rem;
+  }
+  .kv dt {
+    flex: 0 0 auto;
+    color: var(--color-ink-2);
+  }
+  .kv dd {
+    margin: 0;
+    min-width: 0;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+
+  /* ---- Buttons: ink fill (primary) or underlined text (secondary). --- */
   .btn {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    padding: 0.45rem 0.95rem;
+    padding: 0.4rem 0.9rem;
     border: 1px solid var(--color-ink);
+    border-radius: 0;
     background-color: var(--color-ink);
     color: var(--color-paper);
     font-family: var(--font-sans);
@@ -217,7 +286,7 @@ a {
     font-size: 0.95rem;
     line-height: 1.3;
     cursor: pointer;
-    transition: background-color 0.12s ease, color 0.12s ease;
+    transition: background-color 0.12s ease, border-color 0.12s ease;
   }
   .btn:hover:not(:disabled) {
     background-color: var(--color-pen);
@@ -227,34 +296,45 @@ a {
     cursor: not-allowed;
     opacity: 0.45;
   }
-  .btn-ruled {
-    background-color: transparent;
-    color: var(--color-ink);
-    border-color: var(--color-ink);
-  }
-  .btn-ruled:hover:not(:disabled) {
-    background-color: var(--color-pen-tint);
+  .btn-text {
+    display: inline;
+    padding: 0;
+    border: 0;
+    background: none;
     color: var(--color-pen);
-    border-color: var(--color-pen);
+    font: inherit;
+    text-align: left;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    cursor: pointer;
   }
-  .btn-sm {
-    padding: 0.25rem 0.6rem;
-    font-size: 0.875rem;
+  .btn-text:hover:not(:disabled) {
+    color: var(--color-ink);
+  }
+  .btn-text:disabled {
+    cursor: not-allowed;
+    color: var(--color-ink-2);
+    opacity: 0.6;
+    text-decoration: none;
   }
 
+  /* ---- Inputs: writing on a ruled line. ------------------------------ */
   .input {
     width: 100%;
-    padding: 0.45rem 0.7rem;
-    border: 1px solid var(--color-rule);
-    border-bottom-color: var(--color-ink);
-    background-color: #f7f8f5;
+    padding: 0.3rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--color-ink);
+    border-radius: 0;
+    background: transparent;
     color: var(--color-ink);
     font-size: 1.0625rem;
     line-height: 1.45;
     outline: none;
   }
   .input:focus {
-    border-color: var(--color-pen);
+    border-bottom-width: 2px;
+    border-bottom-color: var(--color-pen);
   }
   .input::placeholder {
     color: var(--color-ink-2);
@@ -263,11 +343,43 @@ a {
   .input:disabled {
     opacity: 0.55;
   }
+  select.input {
+    width: auto;
+    min-width: 14rem;
+    padding-right: 1.5rem;
+    cursor: pointer;
+  }
+  /* A lined textarea: every baseline sits on a printed rule. */
+  .input-lined {
+    --lh: 1.75rem;
+    padding: 0;
+    border-bottom: 0;
+    line-height: var(--lh);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--lh) - 1px),
+      var(--color-rule) calc(var(--lh) - 1px),
+      var(--color-rule) var(--lh)
+    );
+    background-attachment: local;
+  }
+  .input-lined:focus {
+    border-bottom: 0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--lh) - 1px),
+      var(--color-pen) calc(var(--lh) - 1px),
+      var(--color-pen) var(--lh)
+    );
+  }
 
-  /* Rows that act as options (sample picker, result rows). */
+  /* Rows that act as options (ranked list, search results). */
   .row-btn {
     display: block;
     width: 100%;
+    padding: 0;
     text-align: left;
     background: transparent;
     border: 0;
@@ -278,61 +390,45 @@ a {
   .row-btn:hover:not(:disabled) {
     background-color: var(--color-paper-2);
   }
-  .row-btn[aria-selected="true"],
-  .row-btn[aria-pressed="true"] {
-    background-color: var(--color-pen-tint);
-  }
   .row-btn:disabled {
     cursor: not-allowed;
     opacity: 0.5;
   }
-
-  .part-heading {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
-    padding-bottom: 0.35rem;
-    border-bottom: 2px solid var(--color-ink);
-  }
-  .part-heading h2 {
-    font-family: var(--font-slab);
-    font-weight: 700;
-    font-size: 1.55rem;
-    line-height: 1.15;
-    margin: 0;
-  }
-  .part-heading .part-no {
-    font-family: var(--font-slab);
-    font-weight: 500;
-    font-size: 1.1rem;
-    color: var(--color-ink-2);
-  }
-  .part-heading .part-desc {
-    font-size: 0.95rem;
-    color: var(--color-ink-2);
+  /* The selected entry gets a pen tick in the margin, nothing else. */
+  .row-btn[aria-selected="true"] {
+    box-shadow: inset 3px 0 0 var(--color-pen);
   }
 
-  /* Ruled data table rows. */
-  .ruled-row {
-    border-bottom: 1px solid var(--color-rule-2);
+  /* Matched phrases in the clinical text: three underline styles, one ink. */
+  .match {
+    background: transparent;
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--color-ink);
   }
-}
-
-/* ---- Motion: a stamp impression and the gauge arc, nothing else. ------- */
-
-@keyframes stamp-press {
-  from {
-    opacity: 0;
-    transform: rotate(-2.5deg) scale(1.25);
+  .match-synonym {
+    text-decoration-style: double;
+    text-decoration-thickness: 1px;
   }
-  to {
-    opacity: 1;
-    transform: rotate(-2.5deg) scale(1);
+  .match-layterm {
+    text-decoration-style: dotted;
   }
-}
 
-.gauge-arc {
-  transition: stroke-dashoffset 0.5s ease-out;
+  /* One inked stamp. */
+  .ink-stamp {
+    display: block;
+    width: min(100%, 290px);
+    height: auto;
+    mix-blend-mode: multiply;
+  }
+
+  /* Drawn figures. */
+  .fig-track {
+    height: 1px;
+    background-color: var(--color-ink);
+  }
 }
 
 /* ---- Range sliders: a ruled track with a square ink thumb. ------------- */
@@ -347,25 +443,25 @@ input[type="range"] {
   margin: 0;
 }
 input[type="range"]::-webkit-slider-runnable-track {
-  height: 2px;
-  background: var(--color-rule);
+  height: 1px;
+  background: var(--color-ink);
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   margin-top: -8px;
-  height: 18px;
-  width: 10px;
+  height: 17px;
+  width: 9px;
   background: var(--color-ink);
   border: 1px solid var(--color-paper);
 }
 input[type="range"]::-moz-range-track {
-  height: 2px;
-  background: var(--color-rule);
+  height: 1px;
+  background: var(--color-ink);
 }
 input[type="range"]::-moz-range-thumb {
-  height: 18px;
-  width: 10px;
+  height: 17px;
+  width: 9px;
   border-radius: 0;
   background: var(--color-ink);
   border: 1px solid var(--color-paper);
@@ -376,9 +472,9 @@ input[type="range"]:disabled {
 }
 
 input[type="checkbox"] {
-  accent-color: var(--color-pen);
-  width: 18px;
-  height: 18px;
+  accent-color: var(--color-ink);
+  width: 17px;
+  height: 17px;
 }
 
 button:focus-visible,

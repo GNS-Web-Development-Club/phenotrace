@@ -22,9 +22,9 @@ function norm(chrom: string): string {
 }
 
 /**
- * Schematic genome map: one ruled track per chromosome that carries a ranked
- * variant, with a tick placed proportionally by position. Taller, darker ticks
- * score higher; the selected variant is drawn in pen blue.
+ * Figure: one hairline per chromosome that carries a ranked variant, drawn to
+ * GRCh38 length, with a tick at each variant's position. Taller ticks score
+ * higher. The selected variant is drawn in pen and labelled with its gene.
  */
 export function ChromosomeMap({ results, max, selectedId, onSelect }: Props) {
   const denom = Math.max(0.0001, max);
@@ -41,14 +41,8 @@ export function ChromosomeMap({ results, max, selectedId, onSelect }: Props) {
   if (chroms.length === 0) return null;
 
   return (
-    <div className="sheet">
-      <div className="sheet-head">
-        <span className="sheet-title">Genome map</span>
-        <span className="sheet-note">
-          schematic, GRCh38 lengths; {results.length} ranked variant{results.length === 1 ? "" : "s"}; click a tick to inspect
-        </span>
-      </div>
-      <div className="flex flex-col gap-1 px-4 py-3">
+    <figure className="m-0">
+      <div className="flex flex-col gap-0.5">
         {chroms.map((c) => {
           const len = CHROM_LEN[c];
           const trackPct = (len / MAX_LEN) * 100;
@@ -56,14 +50,15 @@ export function ChromosomeMap({ results, max, selectedId, onSelect }: Props) {
           return (
             <div key={c} className="flex items-center gap-3">
               <span className="w-8 shrink-0 text-right font-mono text-[0.95rem] text-ink-2">{c}</span>
-              <div className="relative h-5 flex-1">
-                <div className="absolute top-1/2 h-px -translate-y-1/2 bg-ink" style={{ width: `${trackPct}%` }} />
+              <div className="relative h-7 flex-1">
+                <div className="fig-track absolute top-1/2 -translate-y-1/2" style={{ width: `${trackPct}%` }} />
+                <div className="absolute top-1/2 h-[7px] w-px -translate-y-1/2 bg-ink" style={{ left: `${trackPct}%` }} />
                 {marks.map(({ sv, rank }) => {
                   const c2 = norm(sv.variant.chrom);
                   const posPct = Math.min(100, (sv.variant.pos / CHROM_LEN[c2]) * 100) * (trackPct / 100);
                   const selected = sv.variant.id === selectedId;
                   const strength = sv.breakdown.composite / denom;
-                  const h = 8 + Math.round(strength * 10);
+                  const h = 9 + Math.round(strength * 11);
                   return (
                     <button
                       key={sv.variant.id}
@@ -71,13 +66,18 @@ export function ChromosomeMap({ results, max, selectedId, onSelect }: Props) {
                       onClick={() => onSelect(sv.variant.id)}
                       title={`#${rank + 1} ${sv.annotation.gene ?? "no gene"}, ${sv.variant.id}, ${sv.breakdown.composite.toFixed(3)}`}
                       aria-label={`Rank ${rank + 1}, ${sv.annotation.gene ?? "unknown gene"} on chromosome ${c2}, score ${sv.breakdown.composite.toFixed(3)}`}
-                      className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 p-1"
+                      className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 px-1.5 py-1"
                       style={{ left: `${posPct}%` }}
                     >
                       <span
-                        className={`block ${selected ? "w-[4px] bg-pen" : "w-[3px] bg-ink"}`}
-                        style={{ height: selected ? 20 : h, opacity: selected ? 1 : 0.45 + 0.55 * strength }}
+                        className={`block ${selected ? "w-[2px] bg-pen" : "w-px bg-ink"}`}
+                        style={{ height: selected ? 22 : h }}
                       />
+                      {selected && (
+                        <span className="absolute bottom-1/2 left-full mb-[3px] whitespace-nowrap pl-1 font-mono text-[0.875rem] italic leading-none text-pen">
+                          {sv.annotation.gene ?? sv.variant.id}
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -86,6 +86,10 @@ export function ChromosomeMap({ results, max, selectedId, onSelect }: Props) {
           );
         })}
       </div>
-    </div>
+      <figcaption className="caption">
+        Ranked variants by chromosome position, chromosomes drawn to GRCh38 length. Taller ticks
+        score higher; the selected variant is in pen. Click a tick to select it.
+      </figcaption>
+    </figure>
   );
 }

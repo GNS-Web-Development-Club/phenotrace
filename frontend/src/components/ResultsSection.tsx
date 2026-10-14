@@ -14,7 +14,13 @@ const DEFAULT_WEIGHTS: Weights = {
 };
 const DEFAULT_PREFILTER: PreFilter = { max_af: 0.05, drop_non_pass: true, enabled: true };
 
-export function ResultsSection({ termIds }: { termIds: string[] }) {
+export function ResultsSection({
+  termIds,
+  onScored,
+}: {
+  termIds: string[];
+  onScored?: (at: Date) => void;
+}) {
   const [weights, setWeights] = useState<Weights>(DEFAULT_WEIGHTS);
   const [prefilter, setPrefilter] = useState<PreFilter>(DEFAULT_PREFILTER);
   const [inheritance, setInheritance] = useState("");
@@ -45,6 +51,7 @@ export function ResultsSection({ termIds }: { termIds: string[] }) {
         .then((res) => {
           if (cancelled) return;
           setResult(res);
+          onScored?.(new Date());
           const keep = res.results.some((r) => r.variant.id === selRef.current);
           if (!keep) setSelectedId(res.results[0]?.variant.id ?? null);
         })
@@ -70,12 +77,13 @@ export function ResultsSection({ termIds }: { termIds: string[] }) {
     }
   };
 
-  const selected = result?.results.find((r) => r.variant.id === selectedId) ?? null;
+  const selectedIndex = result?.results.findIndex((r) => r.variant.id === selectedId) ?? -1;
+  const selected = selectedIndex >= 0 ? result!.results[selectedIndex]! : null;
   const exportDisabled = exporting || !result || result.results.length === 0;
   const maxComposite = Math.max(0.0001, ...(result?.results.map((r) => r.breakdown.composite) ?? [0]));
 
   return (
-    <div className="flex flex-col gap-4">
+    <div>
       <WeightControls
         weights={weights}
         prefilter={prefilter}
@@ -85,57 +93,53 @@ export function ResultsSection({ termIds }: { termIds: string[] }) {
         onInheritance={setInheritance}
       />
 
-      <div className="sheet flex flex-wrap items-center gap-x-5 gap-y-3 px-4 py-3">
-        <span aria-live="polite">
-          {scoring ? (
-            "Scoring"
-          ) : result ? (
-            <>
-              Ranked <span className="font-mono font-medium">{result.results.length}</span> variants.
-              Re-scores as you move the sliders.
-            </>
-          ) : (
-            "Waiting for the first score."
-          )}
-        </span>
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          <button type="button" onClick={() => void doExport("csv")} disabled={exportDisabled} className="btn btn-ruled btn-sm">
-            Export CSV
-          </button>
-          <button type="button" onClick={() => void doExport("html")} disabled={exportDisabled} className="btn btn-sm">
-            {exporting ? "Preparing" : "Export HTML report"}
-          </button>
-        </div>
+      <p className="measure sect" aria-live="polite">
+        {scoring ? (
+          "Scoring."
+        ) : result ? (
+          <>
+            Ranked <span className="font-mono font-medium">{result.results.length}</span> variants;
+            the list re-scores as you move the sliders.
+          </>
+        ) : (
+          "Waiting for the first score."
+        )}{" "}
+        Export the worksheet as{" "}
+        <button type="button" onClick={() => void doExport("csv")} disabled={exportDisabled} className="btn-text">
+          CSV
+        </button>{" "}
+        or an{" "}
+        <button type="button" onClick={() => void doExport("html")} disabled={exportDisabled} className="btn-text">
+          {exporting ? "HTML report (preparing)" : "HTML report"}
+        </button>
+        .
         {IS_DEMO && (
-          <span className="basis-full text-[0.875rem] text-ink-2">
-            Demo: the CSV reflects the sliders; the HTML report is the recorded default-weight
-            report for this case. Gene-phenotype association uses the case's recorded terms.
+          <span className="note block mt-1">
+            In the demo the CSV reflects the sliders; the HTML report is the recorded
+            default-weight report for this case, and gene-phenotype association uses the case's
+            recorded terms.
           </span>
         )}
-      </div>
+      </p>
 
       {error && (
-        <div role="alert" className="flex items-start gap-3 border border-stamp bg-stamp-tint px-4 py-3 text-[0.95rem] text-stamp">
-          <span className="font-slab font-bold">Scoring error</span>
+        <p role="alert" className="mt-4 text-[0.95rem] text-stamp">
+          <span className="font-slab font-bold">Scoring error. </span>
           <span className="font-mono">{error}</span>
-        </div>
+        </p>
       )}
 
       {result && result.results.length > 0 && (
-        <ChromosomeMap results={result.results} max={maxComposite} selectedId={selectedId} onSelect={setSelectedId} />
+        <div className="sect">
+          <ChromosomeMap results={result.results} max={maxComposite} selectedId={selectedId} onSelect={setSelectedId} />
+        </div>
       )}
 
       {result && (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-          <div className="min-w-0 lg:col-span-5">
-            <div className="flex max-h-[min(60vh,32rem)] flex-col lg:max-h-[64vh]">
-              <ResultsList result={result} selectedId={selectedId} onSelect={setSelectedId} />
-            </div>
-          </div>
-          <div className="min-w-0 lg:col-span-7">
-            <ExplanationPanel sv={selected} />
-          </div>
-        </div>
+        <>
+          <ResultsList result={result} selectedId={selectedId} onSelect={setSelectedId} />
+          <ExplanationPanel sv={selected} rank={selectedIndex} />
+        </>
       )}
     </div>
   );
